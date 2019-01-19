@@ -11,7 +11,7 @@ import android.media.RingtoneManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.ycy.myalarm.Main2Activity;
+import com.ycy.myalarm.MainActivity;
 import com.ycy.myalarm.R;
 import com.ycy.myalarm.db.AlarmBean;
 import com.ycy.myalarm.utils.AlarmManagerUtils;
@@ -32,14 +32,15 @@ public class AlarmReceiver extends BroadcastReceiver {
             int alarmId = intent.getIntExtra(Constants.IntentKey.ALARMID, 0);
             if(alarmId != 0){
                 AlarmBean alarmBean = LitePal.find(AlarmBean.class, alarmId);
-                alarmBean.setInterVal(true);
-                alarmBean.save();
-                AlarmManagerUtils.newInstance(context).creatBroadcastRepeatingAlarm(new Intent().setAction(Constants.BrodCastKey.ACTION)
-                        .addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
-                        .putExtra(Constants.IntentKey.ALARMID, alarmBean.getId()));
-
+                if(!alarmBean.isCancel()){
+                    alarmBean.setInterVal(true);
+                    alarmBean.save();
+                    AlarmManagerUtils.newInstance(context).creatBroadcastRepeatingAlarm(new Intent().setAction(Constants.BrodCastKey.ACTION)
+                            .addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
+                            .putExtra(Constants.IntentKey.ALARMID, alarmBean.getId()));
+                }
                 manager = (NotificationManager) context.getSystemService(android.content.Context.NOTIFICATION_SERVICE);
-                Intent playIntent = new Intent(context, Main2Activity.class);
+                Intent playIntent = new Intent(context, MainActivity.class);
                 PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, playIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
                 builder.setContentTitle("测试标题")

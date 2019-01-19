@@ -13,8 +13,8 @@ import com.ycy.myalarm.utils.Constants;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final int     SINGLEREQUESTCODE    = 1;
-    private final int     REPEATINGREQUESTCODE = 2;
+    private final int     SINGLEREQUESTCODE    = 1; //单次广播标识
+    private final int     REPEATINGREQUESTCODE = 2; //多次广播标识
     private       long    startTime            = System.currentTimeMillis();
     private       long    cycleTime            = 1000 * 60;
     private       Context context              = MainActivity.this;
@@ -27,9 +27,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.but1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlarmBean alarmBean = new AlarmBean(SINGLEREQUESTCODE, startTime, 0, false);
+                AlarmBean alarmBean = new AlarmBean(SINGLEREQUESTCODE, startTime, 0, false,true);
                 alarmBean.save();
-                Log.d("litepal", "onClick: "+alarmBean.toString());
                 //在startTime开始 执行一次
                 AlarmManagerUtils.newInstance(context).creatBroadcastAlarm(
                         new Intent().setAction(Constants.BrodCastKey.ACTION)
@@ -42,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.but2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlarmBean alarmBean = new AlarmBean(REPEATINGREQUESTCODE, startTime, cycleTime, false);
+                AlarmBean alarmBean = new AlarmBean(REPEATINGREQUESTCODE, startTime, cycleTime, false,false);
                 alarmBean.save();
                 // 在startTime开始 6秒执行一次(理论) 亲测部分真机接收时间有误差，例如 vivo Y75s休眠后
                 AlarmManagerUtils.newInstance(context)
@@ -57,8 +56,12 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.but3).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AlarmBean alarmBean = new AlarmBean();
+                alarmBean.setCancel(true);
+                alarmBean.save();
                 AlarmManagerUtils.newInstance(context).
-                        cancelBroadCastAlarmByRequestCode(REPEATINGREQUESTCODE, new Intent().setAction(Constants.BrodCastKey.ACTION));
+                        cancelBroadCastAlarmByRequestCode(REPEATINGREQUESTCODE, new Intent().setAction(Constants.BrodCastKey.ACTION)
+                                .putExtra(Constants.IntentKey.ALARMID, alarmBean.getId()));
             }
         });
 

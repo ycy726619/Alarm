@@ -7,20 +7,31 @@ import java.io.Serializable;
 
 public class AlarmBean extends LitePalSupport implements Serializable {
 
-    private int id;
-    private int requestCode;   //请求标识，用于取消对应Alarm
-    private long startTime;   //执行时间
-    private long cycleTime;   //间隔时间
+    private int     id;
+    private int     requestCode;   //请求标识，用于取消对应Alarm
+    private long    startTime;   //执行时间
+    private long    cycleTime;   //间隔时间
     private boolean interVal;   //唤醒标志
+    private boolean isCancel;   //是否取消
 
     public AlarmBean() {
     }
 
-    public AlarmBean(int requestCode, long startTime, long cycleTime, boolean interVal) {
+    public AlarmBean(int requestCode, long startTime, long cycleTime, boolean interVal, boolean isCancel) {
         this.requestCode = requestCode;
         this.startTime = startTime;
         this.cycleTime = cycleTime;
         this.interVal = interVal;
+        this.isCancel = isCancel;
+    }
+
+    public boolean isCancel() {
+        return isCancel;
+    }
+
+
+    public void setCancel(boolean cancel) {
+        isCancel = cancel;
     }
 
     public int getId() {
